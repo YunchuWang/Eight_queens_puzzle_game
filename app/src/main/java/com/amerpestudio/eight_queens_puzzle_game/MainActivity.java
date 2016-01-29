@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity{
     static int[][] FinalSolutionArray = new int[100][8];
     static int[][] buttonImg = new int [8][8];
     static int[][] queenButtons = new int[8][8];
+    static int[][] solArr;
 
     static Button giveUp;
     static EditText myTextBox;
@@ -320,10 +321,19 @@ public class MainActivity extends AppCompatActivity{
 
                 int num = Integer.parseInt(myTextBox.getText().toString());
                 System.out.println(num);
-                if(num < 0 || num > 92) return;
-                FinalQueens = FinalSolutionArray[num].clone();
-                System.out.println(Arrays.toString(FinalQueens));
-                showPop("solution " + num);
+                int count3 = 0;
+                for(int i = 0; i < solArr.length; i++) {
+                    for(int j = 0; j < solArr[i].length;j++) {
+                        if(solArr[i][j] == -1) {
+                            count3++;
+                            break;
+                        }
+                    }
+                }
+                if(num < 0 || num > (solArr.length - count3)) return;
+                FinalQueens = solArr[num].clone();
+
+
                 for(int i = 0; i < 8; i++) {
                     if(buttonImg[i][FinalQueens[i]] == 1) {
                         buttons[i][FinalQueens[i]].setBackgroundResource(R.drawable.pinkchess);
@@ -372,6 +382,8 @@ public class MainActivity extends AppCompatActivity{
             }
 
             System.out.println(count);
+            Button butt = (Button) findViewById(R.id.button3);
+            butt.setEnabled(false);
             return;
         }
         if(view.getId() == R.id.button2) {
@@ -389,9 +401,33 @@ public class MainActivity extends AppCompatActivity{
                     queens2++;
                 }
             }
-            System.out.println(queens2);
-           if(queens2 == 8) {
-                showPop("solution");
+           int count2 = 0;
+            int index = 0;
+            solArr = new int[100][8];
+            boolean flag = true;
+            //for(int ele = 0; ele < 8; ele++) {
+                for(int kl = 0; kl < FinalSolutionArray.length;kl++) {
+                    for(int ele = 0; ele < 8; ele++) {
+                        if (preSetQueens[ele] != -1) {
+                            if (FinalSolutionArray[kl][ele] != preSetQueens[ele]) {
+                                flag = false;
+                            }
+                        }
+                    }
+                    if(flag) {
+                        count2++;
+                        solArr[index] = FinalSolutionArray[kl].clone();
+                        index++;
+                    }
+                    flag = true;
+                }
+
+
+           if(queens2 == 8 && count2 != 0) {
+                showPop(count2 + " solutions");
+                textView2 = (TextView) findViewById(R.id.textView2);
+                textView2.setText(count2 + " solutions");
+
                for(int i = 0; i < 8; i++) {
                    if(buttonImg[i][FinalQueens[i]] == 1) {
                        buttons[i][FinalQueens[i]].setBackgroundResource(R.drawable.pinkchess);
@@ -462,14 +498,14 @@ public class MainActivity extends AppCompatActivity{
             if(lives > 0) {
                 showPop("You lost a life! " +lives + " left!");
             } else {
-                showPop("You lose the game!");
+
             }
         } else {
             lives--;
             if(lives > 0) {
                 showPop("You lost a life! " +lives + " left!");
             } else {
-                showPop("You lose the game!");
+
             }
         }
 
